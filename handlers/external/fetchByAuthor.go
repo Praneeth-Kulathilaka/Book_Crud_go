@@ -15,7 +15,7 @@ func FetchByAuthor(author string) ([]byte, error) {
 	log.Println("TitletoSend",titleToSend)
 
 
-	response, err := http.Get("https://openlibrary.org/search.json?title="+titleToSend)
+	response, err := http.Get("https://openlibrary.org/search.json?author="+titleToSend+"&sort=new")
 	if err != nil {
 		log.Println("Error: ",err)
 	}
