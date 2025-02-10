@@ -3,6 +3,7 @@ package main
 import (
 	"BookApi/config"
 	"BookApi/handlers"
+	"BookApi/handlers/channels"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,6 +17,7 @@ func main() {
 	r := mux.NewRouter()
 
 	client := config.InitRedis()
+	channels.LogListner()
 
 	if client == nil {
 		log.Println("Error getting redis client ")

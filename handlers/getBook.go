@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"BookApi/config"
+	"BookApi/handlers/channels"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -14,10 +15,11 @@ import (
 func GetAllBooks(w http.ResponseWriter, r *http.Request) {
 	client := config.GetRedisClient()
 
+	channels.SendLogMessage("GET","Get books Api called")
 	booksInRedis, _ := client.SMembers(config.Ctx, "books_set").Result()
 	
-	booksArray, _ := json.Marshal(booksInRedis)
-	log.Println(booksArray)
+	// booksArray, _ := json.Marshal(booksInRedis)
+	// log.Println(booksArray)
 	responseJSON := "[" + strings.Join(booksInRedis, ",") + "]"
 
 	w.Header().Set("Content-Type","application/json")

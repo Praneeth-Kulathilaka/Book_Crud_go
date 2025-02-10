@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"BookApi/config"
+	"BookApi/handlers/channels"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -20,13 +22,16 @@ var books []*Book
 func CreateBook(w http.ResponseWriter, r *http.Request) {
 	book := &Book{}
 	err := json.NewDecoder(r.Body).Decode(&book)
-	log.Println("Recieved", book)
+	// log.Println("Recieved", book)
 	if err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		log.Println(err)
 		return
 	}
 	book.ID = uuid.New().ClockSequence()
+
+	message := fmt.Sprintf("/books -- ID: %d", book.ID)
+	channels.SendLogMessage("POST",message)
 
 	client := config.GetRedisClient()
 
