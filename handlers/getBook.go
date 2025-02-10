@@ -1,17 +1,27 @@
 package handlers
 
 import (
+	"BookApi/config"
 	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
 
 func GetAllBooks(w http.ResponseWriter, r *http.Request) {
+	client := config.GetRedisClient()
+
+	booksInRedis, _ := client.SMembers(config.Ctx, "books_set").Result()
+	
+	booksArray, _ := json.Marshal(booksInRedis)
+	log.Println(booksArray)
+	responseJSON := "[" + strings.Join(booksInRedis, ",") + "]"
+
 	w.Header().Set("Content-Type","application/json")
-	json.NewEncoder(w).Encode(books)
+	w.Write([]byte(responseJSON))
 }
 
 func GetABook (w http.ResponseWriter, r *http.Request) {

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"BookApi/config"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -9,9 +10,9 @@ import (
 )
 
 type Book struct {
-	ID int `json:"id"`
-	Title  string `json:"title"`
-	Author string `json:"author"`
+	ID int `json:"id" redis:"id"`
+	Title  string `json:"title" redis:"title"`
+	Author string `json:"author" redis:"author"`
 }
 
 var books []*Book
@@ -26,8 +27,18 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	book.ID = uuid.New().ClockSequence()
+
+	client := config.GetRedisClient()
+
+	data, _ := json.Marshal(book)
+	_, err = client.SAdd(config.Ctx, "books_set", data, 0).Result()
+	if err != nil {
+		log.Println("Error caching data",err)
+		return
+	}
 	
 	books = append(books, book)
+	
 	w.Header().Set("Content-Type","application/json")
 	json.NewEncoder(w).Encode(book)
 }

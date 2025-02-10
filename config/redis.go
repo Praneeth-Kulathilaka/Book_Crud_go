@@ -26,3 +26,6 @@ func InitRedis() *redis.Client {
 	return redisClient
 }
 
+func GetRedisClient() *redis.Client {
+	return redisClient
+}
