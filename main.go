@@ -4,9 +4,11 @@ import (
 	"BookApi/config"
 	"BookApi/handlers"
 	"BookApi/handlers/channels"
+	"BookApi/handlers/redis"
 	"fmt"
 	"log"
 	"net/http"
+	"sync"
 
 	// "BookApi/handlers/external"
 
@@ -15,9 +17,15 @@ import (
 
 func main() {
 	r := mux.NewRouter()
-
+	
 	client := config.InitRedis()
-	channels.LogListner()
+	
+	wg := new(sync.WaitGroup)
+
+	wg.Add(2)
+	go channels.LogListner(wg)
+
+	go redis.MonitorIdleTasks(wg)
 
 	if client == nil {
 		log.Println("Error getting redis client ")
@@ -41,4 +49,6 @@ func main() {
 
 	fmt.Println("Server is running on port 8080...")
 	http.ListenAndServe(":8080", r)
+
+	wg.Wait()
 }

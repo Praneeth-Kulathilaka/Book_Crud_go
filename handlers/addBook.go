@@ -35,8 +35,16 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	client := config.GetRedisClient()
 
-	data, _ := json.Marshal(book)
-	_, err = client.SAdd(config.Ctx, "books_set", data, 0).Result()
+	// data, _ := json.Marshal(book)
+	// _, err = client.SAdd(config.Ctx, "books_set", data, 0).Result()
+	data := map[string]interface{}{
+		"id": book.ID,
+		"title": book.Title,
+		"author": book.Author,
+	} 
+	// log.Println("Dataq: ",data)
+	hashKeyValue := fmt.Sprintf("books:%d",book.ID)
+	_, err = client.HSet(config.Ctx,hashKeyValue,data).Result()
 	if err != nil {
 		log.Println("Error caching data",err)
 		return
