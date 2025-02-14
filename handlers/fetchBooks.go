@@ -1,8 +1,9 @@
 package handlers
 
 import (
-	"BookApi/handlers/external"
+	"BookApi/handlers/channels"
 	"BookApi/handlers/dto"
+	"BookApi/handlers/external"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -24,9 +25,12 @@ func Fetch(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("isbn")
 	title := r.URL.Query().Get("title")
 	author := r.URL.Query().Get("author")
-	log.Println("Isbn from query: ",id)
-	log.Println("Title from query: ",title)
-	log.Println("Author from query: ",author)
+	// log.Println("Isbn from query: ",id)
+	// log.Println("Title from query: ",title)
+	// log.Println("Author from query: ",author)
+
+	channels.SendLogMessage("GET","/onlineBooks")
+
 
 	var response []byte
 	var err error

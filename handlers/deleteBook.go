@@ -1,7 +1,9 @@
 package handlers
 
 import (
-	"log"
+	"BookApi/handlers/channels"
+	"fmt"
+	// "log"
 	"net/http"
 	"strconv"
 
@@ -11,7 +13,11 @@ import (
 func Delete(w http.ResponseWriter, r *http.Request){
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
-	log.Println("Put id is ",id)
+	// log.Println("Put id is ",id)
+	message := fmt.Sprintf("/books -- ID: %d", id)
+	channels.SendLogMessage("DELETE",message)
+
+	
 	if err != nil || id == 0 {
 		http.Error(w, "Invalid book id", http.StatusBadRequest)
 		return
